@@ -1,0 +1,248 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+using System;
+using System.IO;
+using System.Collections.Generic;
+
+public class GameManager : MonoBehaviour {
+
+	// public Vars
+	public static GameManager ins;
+
+	public enum GameState {Main, Play, GameOver}
+	public GameState state;
+	
+	public float TotalGameTime = 60;
+	public Text Timer;
+
+	public List<string> AllLetters;
+	public List<string> WrongLetters;
+	public string CorrectLetter;
+	public List<string> CorrectLetters;
+	public Text CorrectLetterText;
+	public int Score;
+	public Text ScoreText;
+
+	public GameObject Spawner;
+
+	// Level Design 
+	public TextAsset fileInfEasy;
+	private string Easytext;
+
+	public TextAsset fileInfMedian;
+	private string Mediantext;
+
+	public TextAsset fileInfHard;
+	private string Hardtext;
+
+	public List<string> EasyList = new List<string>();
+	public List<string> MedianList = new List<string>();
+	public List<string> HardList = new List<string>();
+
+	public string CurrentLine;
+	public string[] CurrentLineSplits;
+
+
+	public float GameSpeed;
+	private int SpawnerCount;
+	private float spawnWait;
+	private float startWait;
+	private float waveWait = 1;
+	public List<string>  SpawnerKind;
+
+	public bool OnFireMode;
+	public int CorrectAnswers;
+
+	// Textures
+	public List<Sprite> AllFishesSprites;
+	public List<Sprite>  AllObsticlesSprites;
+
+	// Audio
+	public AudioSource WinFX;
+
+
+	void Start ()
+	{
+		// Get game design data from text files and add to lists
+		StringReader readerEasy = null;
+		readerEasy = new StringReader(fileInfEasy.text);
+		
+		while ((Easytext = readerEasy.ReadLine()) != null)
+		{
+			EasyList.Add(Easytext);
+		}
+
+		StringReader readerMedian = null;
+		readerMedian = new StringReader(fileInfMedian.text);
+		
+		while ((Mediantext = readerMedian.ReadLine()) != null)
+		{
+			MedianList.Add(Mediantext);
+		}
+
+		StringReader readerHard = null;
+		readerHard = new StringReader(fileInfHard.text);
+		
+		while ((Hardtext = readerHard.ReadLine()) != null)
+		{
+			HardList.Add(Hardtext);
+		}
+
+		ins = this;
+
+		// Parralax speed
+		parralax.ins.ParallaxSpeedBackground = GameSpeed / 20;
+		parralax.ins.ParallaxSpeedButtom = GameSpeed / 15;
+
+		StartNewGame ();
+	}
+
+	void Update()
+	{
+		if (state == GameState.Play)
+		{
+		TotalGameTime -= Time.deltaTime;
+		Timer.text = TotalGameTime.ToString ("0");
+		}
+
+		if (TotalGameTime <= 0)
+		{
+			state = GameState.GameOver;
+			WinFX.Play();
+		}
+
+		if (state == GameState.GameOver)
+		{
+			GameOver();
+		}
+	}
+
+	public void StartNewGame() {
+
+		state = GameState.Play;
+		Score = 0;
+		UpdateScore ();
+		CorrectLetters.Clear ();
+		CreateNewLetter ();
+		StartCoroutine (SpawnWaves ());
+	}
+
+	public void UpdateScore()
+	{
+		ScoreText.text = Score.ToString();
+	}
+
+	public void CreateNewLetter()
+	{
+		WrongLetters.Clear ();
+		int RandomCorrect = UnityEngine.Random.Range (0, AllLetters.Count);
+		CorrectLetter = AllLetters [RandomCorrect];
+		CorrectLetterText.text = CorrectLetter;
+		
+		for (int i = 0; i < AllLetters.Count; i++) {
+			
+			if (i != RandomCorrect)
+			{
+				WrongLetters.Add(AllLetters[i]);
+			}
+		}
+
+		GameObject[] Spawneres = GameObject.FindGameObjectsWithTag ("Spawner");
+
+		for (int i = 0; i < Spawneres.Length; i++) {
+
+			Spawner ThisSpawner = Spawneres[i].GetComponent<Spawner>();
+
+			if (ThisSpawner.FishText.text == CorrectLetter)
+			{
+				ThisSpawner.name =  "correct(Clone)";
+			}
+			else if (ThisSpawner.FishText.text != CorrectLetter && ThisSpawner.FishText.text != "")
+			{
+				ThisSpawner.name =  "wrong(Clone)";
+			}
+
+
+		}
+	}
+
+	void LevelDesign()
+	{
+		// Easy
+		if (GameSpeed <= 3) {
+
+			int RandomLine = UnityEngine.Random.Range(0,EasyList.Count);
+			CurrentLine = EasyList [RandomLine];
+			CurrentLineSplits = CurrentLine.Split (',');
+			SpawnerCount = CurrentLineSplits.Length;
+		} 
+		// Median
+		else if (GameSpeed <= 5 && GameSpeed > 3) {
+
+			int RandomLine = UnityEngine.Random.Range(0,MedianList.Count);
+			CurrentLine = MedianList [RandomLine];
+			CurrentLineSplits = CurrentLine.Split (',');
+			SpawnerCount = CurrentLineSplits.Length;
+
+		}
+		// Hard 
+		else if (GameSpeed <= 7 && GameSpeed > 5)
+		{
+			int RandomLine = UnityEngine.Random.Range(0,HardList.Count);
+			CurrentLine = HardList [RandomLine];
+			CurrentLineSplits = CurrentLine.Split (',');
+			SpawnerCount = CurrentLineSplits.Length;
+
+		}
+
+
+	}
+	
+
+	IEnumerator SpawnWaves ()
+	{
+		yield return new WaitForSeconds (startWait);
+		while (true)
+		{
+			LevelDesign();
+
+			for (int i = 0; i < SpawnerCount; i++)
+			{
+				if (state == GameState.Play)
+				{
+				
+				string FirstItemInLine = CurrentLineSplits[i];
+				string[] split = FirstItemInLine.Split (';');
+				spawnWait = float.Parse(split[0]);
+				string SpawnerName = split[1].Trim();
+				Spawner.name = SpawnerName;
+				GameObject SpawnRaw = GameObject.Find(split[2].Trim());
+
+				Vector3 spawnPosition = SpawnRaw.transform.position;
+				Quaternion spawnRotation = Quaternion.identity;
+				Instantiate (Spawner, spawnPosition, spawnRotation);
+				
+
+				yield return new WaitForSeconds (spawnWait);
+
+				}
+			}
+			yield return new WaitForSeconds (waveWait);
+		}
+	}
+	
+	 void GameOver()
+	{
+		TotalGameTime = 60;
+
+		GameObject[] Spawneres = GameObject.FindGameObjectsWithTag ("Spawner");
+		
+		for (int i = 0; i < Spawneres.Length; i++) {
+			
+			Destroy(Spawneres[i]);
+		}
+
+	}
+
+}
