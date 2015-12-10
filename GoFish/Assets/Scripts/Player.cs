@@ -25,7 +25,7 @@ public class Player : MonoBehaviour {
 	public int ScoreForOldLetter;
 	public int ScoreForWrongLetter;
 	public int ScoreOnFireMode;
-
+	public float SpeedToAdd;
 	//Animation vars
 	Animator anim;
 	int jumpHash;
@@ -135,8 +135,8 @@ public class Player : MonoBehaviour {
 			GameManager.ins.CorrectLetters.Add(GameManager.ins.CorrectLetter);
 
 			GameManager.ins.CreateNewLetter();
-			GameManager.ins.GameSpeed += 0.5f;
-			moveSpeed += 0.5f;
+			GameManager.ins.GameSpeed += SpeedToAdd;
+			moveSpeed += SpeedToAdd;
 
 			// Adjust Parralax background speed
 			parralax.ins.ParallaxSpeedBackground += 0.05f;
