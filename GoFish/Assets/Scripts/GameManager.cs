@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour {
 	public float TotalGameTime = 60;
 	public Text Timer;
 
+	public float GameSpeed;
+	public Text SpeedText;
+	
 	public List<string> AllLetters;
 	public List<string> WrongLetters;
 	public string CorrectLetter;
@@ -24,7 +27,9 @@ public class GameManager : MonoBehaviour {
 	public int Score;
 	public Text ScoreText;
 
+	// public gameObjects
 	public GameObject Spawner;
+	public GameObject GameOverPanel;
 
 	// Level Design 
 	public TextAsset fileInfEasy;
@@ -42,9 +47,7 @@ public class GameManager : MonoBehaviour {
 
 	public string CurrentLine;
 	public string[] CurrentLineSplits;
-
-
-	public float GameSpeed;
+	
 	private int SpawnerCount;
 	private float spawnWait;
 	private float startWait;
@@ -91,10 +94,6 @@ public class GameManager : MonoBehaviour {
 
 		ins = this;
 
-		// Parralax speed
-		parralax.ins.ParallaxSpeedBackground = GameSpeed / 20;
-		parralax.ins.ParallaxSpeedButtom = GameSpeed / 15;
-
 		StartNewGame ();
 	}
 
@@ -103,30 +102,45 @@ public class GameManager : MonoBehaviour {
 		if (state == GameState.Play)
 		{
 		TotalGameTime -= Time.deltaTime;
-		Timer.text = TotalGameTime.ToString ("0");
+		Timer.text = TotalGameTime.ToString ("00.00");
 		}
 
 		if (TotalGameTime <= 0)
 		{
-			state = GameState.GameOver;
 			WinFX.Play();
-		}
-
-		if (state == GameState.GameOver)
-		{
 			GameOver();
 		}
+
 	}
 
 	public void StartNewGame() {
 
-		state = GameState.Play;
+		GameOverPanel.SetActive (false);
+
+		//Reset Timer
+		TotalGameTime = 60;
+		Timer.text = TotalGameTime.ToString ("00.00");
+
+		//Reset Score
 		Score = 0;
 		UpdateScore ();
+
+		//Reset Speed
+		GameSpeed = 3;
+		SpeedText.text = GameSpeed.ToString ();
+
+		//Reset Parallex speed
+		parralax.ins.ParallaxSpeedBackground = GameSpeed / 20;
+		parralax.ins.ParallaxSpeedButtom = GameSpeed / 15;
+
+		state = GameState.Play;
+
 		CorrectLetters.Clear ();
 		CreateNewLetter ();
 		StartCoroutine (SpawnWaves ());
 	}
+
+
 
 	public void UpdateScore()
 	{
@@ -202,9 +216,11 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator SpawnWaves ()
 	{
+
 		yield return new WaitForSeconds (startWait);
-		while (true)
+		while (state == GameState.Play)
 		{
+			//print ("CO");
 			LevelDesign();
 
 			for (int i = 0; i < SpawnerCount; i++)
@@ -232,9 +248,13 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 	
-	 void GameOver()
+	public void GameOver()
 	{
-		TotalGameTime = 60;
+		StopAllCoroutines ();
+
+		state = GameState.GameOver;
+
+		GameOverPanel.SetActive (true);
 
 		GameObject[] Spawneres = GameObject.FindGameObjectsWithTag ("Spawner");
 		
@@ -244,5 +264,6 @@ public class GameManager : MonoBehaviour {
 		}
 
 	}
+
 
 }

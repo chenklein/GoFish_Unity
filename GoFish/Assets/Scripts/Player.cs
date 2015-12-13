@@ -30,6 +30,7 @@ public class Player : MonoBehaviour {
 	Animator anim;
 	int jumpHash;
 
+	private int mCorrectAnswers;
 
 	void Start(){
 
@@ -61,7 +62,14 @@ public class Player : MonoBehaviour {
 		Vector3 worldLowerCorner = Camera.main.ScreenToWorldPoint(LowerCorner);
 		FishworldLowerCorner = new Vector3 (worldLowerCorner.x + Fish_Half_szX, worldLowerCorner.y + Fish_Half_szY, worldLowerCorner.z);
 
+		ResetPlayer ();
+		//transform.position = new Vector3 ( FishworldUpperCorner.x , FishworldUpperCorner.y/2 - Fish_szY, FishworldUpperCorner.z);
+	}
+
+	public void ResetPlayer()
+	{
 		transform.position = new Vector3 ( FishworldUpperCorner.x , FishworldUpperCorner.y/2 - Fish_szY, FishworldUpperCorner.z);
+		mCorrectAnswers = 0;
 	}
 
 	void FixedUpdate () {
@@ -99,7 +107,7 @@ public class Player : MonoBehaviour {
 			BadSFX.Play();
 			GameManager.ins.Score -= ScoreForWrongLetter;
 			GameManager.ins.UpdateScore();
-			GameManager.ins.CorrectAnswers = 0;
+			mCorrectAnswers = 0;
 			GameManager.ins.OnFireMode = false;
 		}
 		// If hit correct letter
@@ -108,9 +116,9 @@ public class Player : MonoBehaviour {
 			GoodSFX.Play();
 
 			// Fire Mode - Number Of correct Answers 
-			GameManager.ins.CorrectAnswers += 1;
+			mCorrectAnswers += 1;
 
-			if (GameManager.ins.CorrectAnswers >= 5)
+			if (mCorrectAnswers >= GameManager.ins.CorrectAnswers )
 			{
 				GameManager.ins.OnFireMode = true;
 			}
@@ -147,11 +155,10 @@ public class Player : MonoBehaviour {
 		// If hit obstacale
 		if (c.gameObject.name == "Obstacle(Clone)") 
 		{
-			GameManager.ins.CorrectAnswers = 0;
+			mCorrectAnswers = 0;
 			GameManager.ins.OnFireMode = false;
 			LoseSFX.Play();
-
-			GameManager.ins.state =  GameManager.GameState.GameOver;
+			GameManager.ins.GameOver();
 		}
 
 
