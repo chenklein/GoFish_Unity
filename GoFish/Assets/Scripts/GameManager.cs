@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour {
 	private int SpawnerCount;
 	private float spawnWait;
 	private float startWait;
-	private float waveWait = 1;
+	public float waveWait ;
 	public List<string>  SpawnerKind;
 
 	public bool OnFireMode;
