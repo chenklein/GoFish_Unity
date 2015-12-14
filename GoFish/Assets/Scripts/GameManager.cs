@@ -101,15 +101,15 @@ public class GameManager : MonoBehaviour {
 	{
 		if (state == GameState.Play)
 		{
-		TotalGameTime -= Time.deltaTime;
+		TotalGameTime += Time.deltaTime;
 		Timer.text = TotalGameTime.ToString ("00.00");
 		}
 
-		if (TotalGameTime <= 0)
-		{
-			WinFX.Play();
-			GameOver();
-		}
+//		if (TotalGameTime <= 0)
+//		{
+//			WinFX.Play();
+//			GameOver();
+//		}
 
 	}
 
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour {
 		GameOverPanel.SetActive (false);
 
 		//Reset Timer
-		TotalGameTime = 60;
+		TotalGameTime = 0;
 		Timer.text = TotalGameTime.ToString ("00.00");
 
 		//Reset Score
@@ -153,7 +153,11 @@ public class GameManager : MonoBehaviour {
 		int RandomCorrect = UnityEngine.Random.Range (0, AllLetters.Count);
 		CorrectLetter = AllLetters [RandomCorrect];
 		CorrectLetterText.text = CorrectLetter;
-		
+
+		AudioClip ac = Resources.Load(CorrectLetter.Trim()) as AudioClip;
+		AudioSource.PlayClipAtPoint(ac, Vector3.zero);
+
+
 		for (int i = 0; i < AllLetters.Count; i++) {
 			
 			if (i != RandomCorrect)
@@ -190,6 +194,8 @@ public class GameManager : MonoBehaviour {
 			CurrentLine = EasyList [RandomLine];
 			CurrentLineSplits = CurrentLine.Split (',');
 			SpawnerCount = CurrentLineSplits.Length;
+
+			//print(CurrentLine);
 		} 
 		// Median
 		else if (GameSpeed <= 5 && GameSpeed > 3) {
@@ -217,10 +223,8 @@ public class GameManager : MonoBehaviour {
 	IEnumerator SpawnWaves ()
 	{
 
-		yield return new WaitForSeconds (startWait);
 		while (state == GameState.Play)
 		{
-			//print ("CO");
 			LevelDesign();
 
 			for (int i = 0; i < SpawnerCount; i++)
@@ -230,21 +234,22 @@ public class GameManager : MonoBehaviour {
 				
 				string FirstItemInLine = CurrentLineSplits[i];
 				string[] split = FirstItemInLine.Split (';');
-				spawnWait = float.Parse(split[0]);
+				spawnWait = float.Parse(split[0].Trim());
 				string SpawnerName = split[1].Trim();
 				Spawner.name = SpawnerName;
 				GameObject SpawnRaw = GameObject.Find(split[2].Trim());
+				
+				yield return new WaitForSeconds (spawnWait);
+				//print(spawnWait);
 
 				Vector3 spawnPosition = SpawnRaw.transform.position;
 				Quaternion spawnRotation = Quaternion.identity;
 				Instantiate (Spawner, spawnPosition, spawnRotation);
-				
-
-				yield return new WaitForSeconds (spawnWait);
 
 				}
+
+				yield return new WaitForSeconds (spawnWait);
 			}
-			yield return new WaitForSeconds (waveWait);
 		}
 	}
 	

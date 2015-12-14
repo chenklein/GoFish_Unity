@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
+	public static Player ins;
+
 	public Camera cam;
 	private float moveSpeed;
 	public Text GameSpeedText;
@@ -32,7 +34,13 @@ public class Player : MonoBehaviour {
 
 	private int mCorrectAnswers;
 
+	public string[] CorrextAnswers;
+	public string[] WrongAnswers;
+	public int DifficultyLevel;
+
 	void Start(){
+
+		ins = this;
 
 		if (cam == null) {
 			cam = Camera.main;
@@ -63,7 +71,6 @@ public class Player : MonoBehaviour {
 		FishworldLowerCorner = new Vector3 (worldLowerCorner.x + Fish_Half_szX, worldLowerCorner.y + Fish_Half_szY, worldLowerCorner.z);
 
 		ResetPlayer ();
-		//transform.position = new Vector3 ( FishworldUpperCorner.x , FishworldUpperCorner.y/2 - Fish_szY, FishworldUpperCorner.z);
 	}
 
 	public void ResetPlayer()
