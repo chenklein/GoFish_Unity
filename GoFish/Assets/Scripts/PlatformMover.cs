@@ -4,7 +4,7 @@ using System.Collections;
 public class PlatformMover : MonoBehaviour {
 
 	private float ScreenLeftBoundary;
-	private float GameObjectWidth;
+	//private float GameObjectWidth;
 
 
 	void Awake()
@@ -12,7 +12,7 @@ public class PlatformMover : MonoBehaviour {
 		Vector3 LeftCorner = new Vector3 (Screen.width - Screen.width  , Screen.height, 10f);
 		Vector3 worldLeftCorner = Camera.main.ScreenToWorldPoint(LeftCorner);
 		ScreenLeftBoundary = worldLeftCorner.x;
-		GameObjectWidth = gameObject.GetComponent<Renderer> ().bounds.size.x;
+		//GameObjectWidth = gameObject.GetComponent<Renderer> ().bounds.size.x;
 	}
 
 	void Update ()
@@ -27,7 +27,7 @@ public class PlatformMover : MonoBehaviour {
 
 		transform.Translate (-Vector2.right * GameManager.ins.GameSpeed * Time.deltaTime);
 			
-			if ((gameObject.transform.position.x + GameObjectWidth) < (ScreenLeftBoundary)) {
+			if ((gameObject.transform.position.x + 10) < (ScreenLeftBoundary)) {
 				Destroy (gameObject);
 			}
 	}

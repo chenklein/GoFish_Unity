@@ -61,6 +61,10 @@ public class GameManager : MonoBehaviour {
 	public List<Sprite> AllFishesSprites;
 	public List<Sprite>  AllObsticlesSprites;
 
+	//public List<Image> AllFishesImages;
+	//public List<Image>  AllObsticlesImages;
+
+
 	// Audio
 	public AudioSource WinFX;
 
