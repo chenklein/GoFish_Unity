@@ -16,8 +16,9 @@ public class GameManager : MonoBehaviour {
 	public float TotalGameTime = 60;
 	public Text Timer;
 
+	public float SpeedOnStart;
 	public float GameSpeed;
-	public Text SpeedText;
+	//public Text SpeedText;
 	
 	public List<string> AllLetters;
 	public List<string> WrongLetters;
@@ -32,6 +33,9 @@ public class GameManager : MonoBehaviour {
 	public GameObject GameOverPanel;
 
 	// Level Design 
+
+	public int LevelNumber;
+
 	public TextAsset fileInfEasy;
 	private string Easytext;
 
@@ -55,16 +59,11 @@ public class GameManager : MonoBehaviour {
 	public List<string>  SpawnerKind;
 
 	public bool OnFireMode;
-	public int CorrectAnswersToOnFireMode;
 
 	// Textures
 	public List<Sprite> AllFishesSprites;
 	public List<Sprite>  AllObsticlesSprites;
-
-	//public List<Image> AllFishesImages;
-	//public List<Image>  AllObsticlesImages;
-
-
+	
 	// Audio
 	public AudioSource WinFX;
 
@@ -103,23 +102,19 @@ public class GameManager : MonoBehaviour {
 
 	void Update()
 	{
-		if (state == GameState.Play)
-		{
-		TotalGameTime += Time.deltaTime;
-		Timer.text = TotalGameTime.ToString ("00.00");
+		if (state == GameState.Play) {
+			TotalGameTime += Time.deltaTime;
+			Timer.text = TotalGameTime.ToString ("00.00");
 		}
-
-//		if (TotalGameTime <= 0)
-//		{
-//			WinFX.Play();
-//			GameOver();
-//		}
 
 	}
 
 	public void StartNewGame() {
 
 		GameOverPanel.SetActive (false);
+
+		//Reset Level
+		LevelNumber = 1;
 
 		//Reset Timer
 		TotalGameTime = 0;
@@ -130,10 +125,14 @@ public class GameManager : MonoBehaviour {
 		UpdateScore ();
 
 		//Reset Speed
-		GameSpeed = 3;
-		SpeedText.text = GameSpeed.ToString ();
+		GameSpeed = SpeedOnStart;
+
+		//Reset Correct & Wrong Answers
+		Player.ins.CorrectAnsweres = 0;
+		Player.ins.WrongAnswers = 0;
 
 		//Reset Parallex speed
+		Player.ins.moveSpeed = GameSpeed;
 		parralax.ins.ParallaxSpeedBackground = GameSpeed / 20;
 		parralax.ins.ParallaxSpeedButtom = GameSpeed / 15;
 
@@ -188,21 +187,19 @@ public class GameManager : MonoBehaviour {
 
 		}
 	}
-
+	
 	void LevelDesign()
 	{
 		// Easy
-		if (GameSpeed <= 3) {
+		if (LevelNumber == 1) {
 
 			int RandomLine = UnityEngine.Random.Range(0,EasyList.Count);
 			CurrentLine = EasyList [RandomLine];
 			CurrentLineSplits = CurrentLine.Split (',');
 			SpawnerCount = CurrentLineSplits.Length;
-
-			//print(CurrentLine);
 		} 
 		// Median
-		else if (GameSpeed <= 5 && GameSpeed > 3) {
+		else if (LevelNumber == 2 ){
 
 			int RandomLine = UnityEngine.Random.Range(0,MedianList.Count);
 			CurrentLine = MedianList [RandomLine];
@@ -211,7 +208,7 @@ public class GameManager : MonoBehaviour {
 
 		}
 		// Hard 
-		else if (GameSpeed <= 7 && GameSpeed > 5)
+		else if (LevelNumber == 3)
 		{
 			int RandomLine = UnityEngine.Random.Range(0,HardList.Count);
 			CurrentLine = HardList [RandomLine];

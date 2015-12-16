@@ -8,9 +8,7 @@ public class Player : MonoBehaviour {
 	public static Player ins;
 
 	public Camera cam;
-	private float moveSpeed;
-	public Text GameSpeedText;
-
+	public float moveSpeed;
 	private float Fish_szX;
 	private float Fish_szY;
 
@@ -27,20 +25,33 @@ public class Player : MonoBehaviour {
 	public int ScoreForOldLetter;
 	public int ScoreForWrongLetter;
 	public int ScoreOnFireMode;
-	public float SpeedToAdd;
+
 	//Animation vars
 	Animator anim;
 	int jumpHash;
 
-	private int mCorrectAnswers;
+	// on FireMode;
+	private int mCorrectAnswersForOnFire;
+	public int CorrectAnswersToOnFireMode;
 
-	public string[] CorrextAnswers;
-	public string[] WrongAnswers;
-	public int DifficultyLevel;
+
+	//Difficulty Vars
+	public int CorrectAnsweres;
+	public int WrongAnswers;
+	
+	public float precentageScoreToUpLevel; // example: 0.7 
+	public float precentageScoreToLowerLevel; // example: 0.5 
+	public int checkScoreOnLastNumberOfItems; // example 10
+
+	void Awake()
+	{
+		ins = this;
+	}
+
 
 	void Start(){
 
-		ins = this;
+		//ins = this;
 
 		if (cam == null) {
 			cam = Camera.main;
@@ -48,11 +59,6 @@ public class Player : MonoBehaviour {
 
 		anim = GetComponent<Animator>();
 		jumpHash = Animator.StringToHash("fishcatch");
-
-
-		//Get speed
-		moveSpeed = GameManager.ins.GameSpeed;
-		GameSpeedText.text = "Speed : " + moveSpeed.ToString();
 
 		// Get Fish Size
 		Fish_szX = gameObject.GetComponent<Renderer>().bounds.size.x;
@@ -76,20 +82,21 @@ public class Player : MonoBehaviour {
 	public void ResetPlayer()
 	{
 		transform.position = new Vector3 ( FishworldUpperCorner.x , FishworldUpperCorner.y/2 - Fish_szY, FishworldUpperCorner.z);
-		mCorrectAnswers = 0;
+		mCorrectAnswersForOnFire = 0;
 	}
 
-	void FixedUpdate () {
+	void Update () {
 
+		print (moveSpeed);
 		// Move player within bounds
 		Vector3 playerPos = transform.position;
-        /*
+        
 		if(Input.GetKey("left") && playerPos.x > FishworldUpperCorner.x)
 			transform.position += Vector3.left * moveSpeed * Time.deltaTime;
 		
 		if(Input.GetKey("right") &&  playerPos.x <  FishworldUpperCorner.x + 15)
 			transform.position += Vector3.right * moveSpeed * Time.deltaTime;
-		*/
+
 		if(Input.GetKey("up") && playerPos.y < FishworldUpperCorner.y - Fish_Half_szY)
 			transform.position += Vector3.up * moveSpeed * Time.deltaTime;    
 		
@@ -103,6 +110,7 @@ public class Player : MonoBehaviour {
 		anim.SetTrigger(jumpHash);
 
 	}
+	
 
 	void OnTriggerEnter2D(Collider2D c)
 	{
@@ -110,22 +118,25 @@ public class Player : MonoBehaviour {
 
 		// If hit wrong letter
 		if (c.gameObject.name == "wrong(Clone)") 
-		{
+		{		
+			WrongAnswers ++;
 			BadSFX.Play();
 			GameManager.ins.Score -= ScoreForWrongLetter;
 			GameManager.ins.UpdateScore();
-			mCorrectAnswers = 0;
+			mCorrectAnswersForOnFire = 0;
 			GameManager.ins.OnFireMode = false;
 		}
 		// If hit correct letter
 		if (c.gameObject.name == "correct(Clone)") 
 		{
+
+			CorrectAnsweres++;
 			GoodSFX.Play();
 
 			// Fire Mode - Number Of correct Answers 
-			mCorrectAnswers += 1;
+			mCorrectAnswersForOnFire += 1;
 
-            if (mCorrectAnswers >= GameManager.ins.CorrectAnswersToOnFireMode)
+			if (mCorrectAnswersForOnFire >= CorrectAnswersToOnFireMode)
 			{
 				GameManager.ins.OnFireMode = true;
 			}
@@ -148,29 +159,70 @@ public class Player : MonoBehaviour {
 
 			GameManager.ins.UpdateScore();
 			GameManager.ins.CorrectLetters.Add(GameManager.ins.CorrectLetter);
-
 			GameManager.ins.CreateNewLetter();
-			GameManager.ins.GameSpeed += SpeedToAdd;
-			moveSpeed += SpeedToAdd;
 
-			// Adjust Parralax background speed
-			parralax.ins.ParallaxSpeedBackground += 0.05f;
-			parralax.ins.ParallaxSpeedButtom += 0.04f;
-
-			GameSpeedText.text = "Speed : " + moveSpeed.ToString();
 		}
 		// If hit obstacale
 		if (c.gameObject.name == "Obstacle(Clone)") 
 		{
-			mCorrectAnswers = 0;
+			mCorrectAnswersForOnFire = 0;
 			GameManager.ins.OnFireMode = false;
 			LoseSFX.Play();
 			GameManager.ins.GameOver();
 		}
 
 
-		Destroy (c.gameObject);
+		//Difficulty + Speed Logic 
 
+		if ((CorrectAnsweres + WrongAnswers) >= checkScoreOnLastNumberOfItems) {
+			
+			print("precentageScoreToUpLevel   "  + CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems );
+			print("precentageScoreToLowerLevel    "  + WrongAnswers * 100 / checkScoreOnLastNumberOfItems);
+
+			if (CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems >= precentageScoreToUpLevel )
+			{
+				GameManager.ins.LevelNumber += 1;
+				CorrectAnsweres = 0;
+				WrongAnswers = 0;
+				print ("LEVEL UP!");
+
+				// Adjust Parralax background speed
+				parralax.ins.ParallaxSpeedBackground += 0.05f;
+				parralax.ins.ParallaxSpeedButtom += 0.04f;
+
+
+			}
+			if (WrongAnswers * 100 / checkScoreOnLastNumberOfItems >= precentageScoreToLowerLevel && (GameManager.ins.LevelNumber > 1))
+			{
+				GameManager.ins.LevelNumber -= 1;
+				CorrectAnsweres = 0;
+				WrongAnswers = 0;
+				print ("LEVEL DOWN!");
+
+				// Adjust Parralax background speed
+				parralax.ins.ParallaxSpeedBackground -= 0.05f;
+				parralax.ins.ParallaxSpeedButtom -= 0.04f;
+
+			}
+
+
+			if (GameManager.ins.LevelNumber == 1)
+			{
+				moveSpeed = 3;
+			}
+			if (GameManager.ins.LevelNumber == 2)
+			{
+				moveSpeed = 5;
+			}
+			if (GameManager.ins.LevelNumber == 3)
+			{
+				moveSpeed = 5;
+			}
+		
+			GameManager.ins.GameSpeed = moveSpeed;
+		}
+
+		Destroy(c.gameObject);
 
 	}
 }
