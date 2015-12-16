@@ -83,13 +83,13 @@ public class Player : MonoBehaviour {
 
 		// Move player within bounds
 		Vector3 playerPos = transform.position;
-
+        /*
 		if(Input.GetKey("left") && playerPos.x > FishworldUpperCorner.x)
 			transform.position += Vector3.left * moveSpeed * Time.deltaTime;
 		
 		if(Input.GetKey("right") &&  playerPos.x <  FishworldUpperCorner.x + 15)
 			transform.position += Vector3.right * moveSpeed * Time.deltaTime;
-		
+		*/
 		if(Input.GetKey("up") && playerPos.y < FishworldUpperCorner.y - Fish_Half_szY)
 			transform.position += Vector3.up * moveSpeed * Time.deltaTime;    
 		
@@ -125,7 +125,7 @@ public class Player : MonoBehaviour {
 			// Fire Mode - Number Of correct Answers 
 			mCorrectAnswers += 1;
 
-			if (mCorrectAnswers >= GameManager.ins.CorrectAnswers )
+            if (mCorrectAnswers >= GameManager.ins.CorrectAnswersToOnFireMode)
 			{
 				GameManager.ins.OnFireMode = true;
 			}

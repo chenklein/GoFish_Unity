@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour {
 	public List<string>  SpawnerKind;
 
 	public bool OnFireMode;
-	public int CorrectAnswers;
+	public int CorrectAnswersToOnFireMode;
 
 	// Textures
 	public List<Sprite> AllFishesSprites;
