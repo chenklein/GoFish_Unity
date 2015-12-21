@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour {
 	public List<string>  SpawnerKind;
 
 	public bool OnFireMode;
+	public bool CanCreateNewLetter;
 
 	// Textures
 	public List<Sprite> AllFishesSprites;
@@ -186,10 +187,13 @@ public class GameManager : MonoBehaviour {
 
 
 		}
+
+		CanCreateNewLetter = false;
 	}
 	
 	void LevelDesign()
 	{
+
 		// Easy
 		if (LevelNumber == 1) {
 
@@ -217,6 +221,11 @@ public class GameManager : MonoBehaviour {
 
 		}
 
+		if (CanCreateNewLetter == true) {
+			
+			CreateNewLetter();
+		}
+
 
 	}
 	
@@ -230,27 +239,22 @@ public class GameManager : MonoBehaviour {
 
 			for (int i = 0; i < SpawnerCount; i++)
 			{
-				if (state == GameState.Play)
-				{
-				
+
 				string FirstItemInLine = CurrentLineSplits[i];
 				string[] split = FirstItemInLine.Split (';');
 				spawnWait = float.Parse(split[0].Trim());
 				string SpawnerName = split[1].Trim();
 				Spawner.name = SpawnerName;
 				GameObject SpawnRaw = GameObject.Find(split[2].Trim());
-				
+
 				yield return new WaitForSeconds (spawnWait);
-				//print(spawnWait);
 
 				Vector3 spawnPosition = SpawnRaw.transform.position;
 				Quaternion spawnRotation = Quaternion.identity;
 				Instantiate (Spawner, spawnPosition, spawnRotation);
 
-				}
-
-				yield return new WaitForSeconds (spawnWait);
 			}
+
 		}
 	}
 	

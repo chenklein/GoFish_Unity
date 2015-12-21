@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
 
 	public Camera cam;
 	public float moveSpeed;
-	private float Fish_szX;
+	//private float Fish_szX;
 	private float Fish_szY;
 
 	private float Fish_Half_szX;
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour {
 		jumpHash = Animator.StringToHash("fishcatch");
 
 		// Get Fish Size
-		Fish_szX = gameObject.GetComponent<Renderer>().bounds.size.x;
+		//Fish_szX = gameObject.GetComponent<Renderer>().bounds.size.x;
 		Fish_szY = gameObject.GetComponent<Renderer>().bounds.size.y;
 
 		Fish_Half_szX = gameObject.GetComponent<Renderer>().bounds.size.x/2;
@@ -87,7 +87,7 @@ public class Player : MonoBehaviour {
 
 	void Update () {
 
-		print (moveSpeed);
+		//print (moveSpeed);
 		// Move player within bounds
 		Vector3 playerPos = transform.position;
         
@@ -159,7 +159,7 @@ public class Player : MonoBehaviour {
 
 			GameManager.ins.UpdateScore();
 			GameManager.ins.CorrectLetters.Add(GameManager.ins.CorrectLetter);
-			GameManager.ins.CreateNewLetter();
+			GameManager.ins.CanCreateNewLetter = true;
 
 		}
 		// If hit obstacale
@@ -176,8 +176,8 @@ public class Player : MonoBehaviour {
 
 		if ((CorrectAnsweres + WrongAnswers) >= checkScoreOnLastNumberOfItems) {
 			
-			print("precentageScoreToUpLevel   "  + CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems );
-			print("precentageScoreToLowerLevel    "  + WrongAnswers * 100 / checkScoreOnLastNumberOfItems);
+//			print("precentageScoreToUpLevel   "  + CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems );
+//			print("precentageScoreToLowerLevel    "  + WrongAnswers * 100 / checkScoreOnLastNumberOfItems);
 
 			if (CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems >= precentageScoreToUpLevel )
 			{
