@@ -1,1 +1,3 @@
-1 ; wrong ; E ,1 ; Obstacle ; D,2 ; wrong ; D,1 ; Obstacle ; E,1 ; wrong ; E,1.5 ; correct ; C
+1 ; Obstacle ; E,3 ; Obstacle ; E
+1 ; wrong ; E,1 ; Obstacle ; D,2 ; wrong ; D,1 ; Obstacle ; E,1 ; wrong ; E,1.5 ; correct ; C
+1 ; wrong ; C,1 ; Obstacle ; D,0.5 ; correct ; D
