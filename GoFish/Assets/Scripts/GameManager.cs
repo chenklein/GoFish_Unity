@@ -132,10 +132,14 @@ public class GameManager : MonoBehaviour {
 		Player.ins.CorrectAnsweres = 0;
 		Player.ins.WrongAnswers = 0;
 
-		//Reset Parallex speed
+		//Reset BG speed
 		Player.ins.moveSpeed = GameSpeed;
-		parralax.ins.ParallaxSpeedBackground = GameSpeed / 20;
+
+		parralax.ins.ParallaxSpeedBackground  = GameSpeed / 20;
 		parralax.ins.ParallaxSpeedButtom = GameSpeed / 15;
+
+		///BGScroller.ins.BG_scrollSpeed = GameSpeed - 0.5f;/// / 20;
+		//ButtomScrolle.ins.Buttom_scrollSpeed = GameSpeed - 1f;// / 15;
 
 		state = GameState.Play;
 
@@ -220,13 +224,7 @@ public class GameManager : MonoBehaviour {
 			SpawnerCount = CurrentLineSplits.Length;
 
 		}
-
-		if (CanCreateNewLetter == true) {
-			
-			CreateNewLetter();
-		}
-
-
+		
 	}
 	
 
@@ -236,6 +234,16 @@ public class GameManager : MonoBehaviour {
 		while (state == GameState.Play)
 		{
 			LevelDesign();
+			//print("NEW LINE");
+			if (CanCreateNewLetter == true) {
+				
+				string FirstItemInLine = CurrentLineSplits[0];
+				string[] split = FirstItemInLine.Split (';');
+				spawnWait = float.Parse(split[0].Trim());
+				yield return new WaitForSeconds (spawnWait);
+				CreateNewLetter();
+			}
+
 
 			for (int i = 0; i < SpawnerCount; i++)
 			{
@@ -248,7 +256,7 @@ public class GameManager : MonoBehaviour {
 				GameObject SpawnRaw = GameObject.Find(split[2].Trim());
 
 				yield return new WaitForSeconds (spawnWait);
-
+		
 				Vector3 spawnPosition = SpawnRaw.transform.position;
 				Quaternion spawnRotation = Quaternion.identity;
 				Instantiate (Spawner, spawnPosition, spawnRotation);

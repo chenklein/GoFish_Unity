@@ -15,15 +15,13 @@ public class PlatformMover : MonoBehaviour {
 		//GameObjectWidth = gameObject.GetComponent<Renderer> ().bounds.size.x;
 	}
 
-	void Update ()
-	{
-		PlatformRemoveAll ();
-	}
 
-	
 
-	void PlatformRemoveAll()
+	void Update()
 	{
+
+		//float newPosition = Mathf.Repeat (Time.time * BG_scrollSpeed, tileSize);
+		//transform.position = Vector2.left * GameManager.ins.GameSpeed * Time.deltaTime;
 
 		transform.Translate (-Vector2.right * GameManager.ins.GameSpeed * Time.deltaTime);
 			
@@ -31,7 +29,6 @@ public class PlatformMover : MonoBehaviour {
 				Destroy (gameObject);
 			}
 	}
-
 
 	
 

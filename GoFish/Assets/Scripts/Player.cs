@@ -43,6 +43,8 @@ public class Player : MonoBehaviour {
 	public float precentageScoreToLowerLevel; // example: 0.5 
 	public int checkScoreOnLastNumberOfItems; // example 10
 
+	public Text LevelNumberText;
+
 	void Awake()
 	{
 		ins = this;
@@ -184,11 +186,16 @@ public class Player : MonoBehaviour {
 				GameManager.ins.LevelNumber += 1;
 				CorrectAnsweres = 0;
 				WrongAnswers = 0;
-				print ("LEVEL UP!");
+				//print ("LEVEL UP!");
+				LevelNumberText.text = "Level : " + GameManager.ins.LevelNumber;
 
 				// Adjust Parralax background speed
+			
 				parralax.ins.ParallaxSpeedBackground += 0.05f;
 				parralax.ins.ParallaxSpeedButtom += 0.04f;
+
+				//BGScroller.ins.BG_scrollSpeed += 0.5f;
+				//ButtomScrolle.ins.Buttom_scrollSpeed += 0.4f;
 
 
 			}
@@ -197,11 +204,15 @@ public class Player : MonoBehaviour {
 				GameManager.ins.LevelNumber -= 1;
 				CorrectAnsweres = 0;
 				WrongAnswers = 0;
-				print ("LEVEL DOWN!");
+				//print ("LEVEL DOWN!");
+				LevelNumberText.text = "Level : " + GameManager.ins.LevelNumber;
 
 				// Adjust Parralax background speed
 				parralax.ins.ParallaxSpeedBackground -= 0.05f;
 				parralax.ins.ParallaxSpeedButtom -= 0.04f;
+
+				//BGScroller.ins.BG_scrollSpeed -= 0.5f;
+				//ButtomScrolle.ins.Buttom_scrollSpeed -= 0.4f;
 
 			}
 
