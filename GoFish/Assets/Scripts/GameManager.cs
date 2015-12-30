@@ -234,16 +234,6 @@ public class GameManager : MonoBehaviour {
 		while (state == GameState.Play)
 		{
 			LevelDesign();
-			//print("NEW LINE");
-			if (CanCreateNewLetter == true) {
-				
-				string FirstItemInLine = CurrentLineSplits[0];
-				string[] split = FirstItemInLine.Split (';');
-				spawnWait = float.Parse(split[0].Trim());
-				yield return new WaitForSeconds (spawnWait);
-				CreateNewLetter();
-			}
-
 
 			for (int i = 0; i < SpawnerCount; i++)
 			{
@@ -263,6 +253,16 @@ public class GameManager : MonoBehaviour {
 
 			}
 
+
+						if (CanCreateNewLetter == true) {
+							
+							string FirstItemInLine = CurrentLineSplits[0];
+							string[] split = FirstItemInLine.Split (';');
+							spawnWait = float.Parse(split[0].Trim());
+							yield return new WaitForSeconds (spawnWait);
+							CreateNewLetter();
+						}
+			
 		}
 	}
 	

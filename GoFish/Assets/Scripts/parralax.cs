@@ -14,7 +14,7 @@ public class parralax : MonoBehaviour {
 		ins = this;
 	}
 	
-	protected void FixedUpdate()
+	protected void Update()
 	{
 		if (gameObject.name == "ParralaxBG")
 		{
