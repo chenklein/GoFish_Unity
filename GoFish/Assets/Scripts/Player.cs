@@ -45,6 +45,8 @@ public class Player : MonoBehaviour {
 
 	public Text LevelNumberText;
 
+    public Vector2 Y_Movement_Range;
+
 	void Awake()
 	{
 		ins = this;
@@ -83,34 +85,49 @@ public class Player : MonoBehaviour {
 
 	public void ResetPlayer()
 	{
-		transform.position = new Vector3 ( FishworldUpperCorner.x , FishworldUpperCorner.y/2 - Fish_szY, FishworldUpperCorner.z);
-		mCorrectAnswersForOnFire = 0;
+        
+        //transform.position = new Vector3(FishworldUpperCorner.x, FishworldUpperCorner.y / 2 - Fish_szY, FishworldUpperCorner.z);
+        transform.position = new Vector3(transform.position.x, (Y_Movement_Range.x + Y_Movement_Range.y)/2, transform.position.z);
+        mCorrectAnswersForOnFire = 0;
 	}
 
-	void Update () {
+    void Update()
+    {
 
-		//print (moveSpeed);
-		// Move player within bounds
-		Vector3 playerPos = transform.position;
-        
+        //print (moveSpeed);
+        // Move player within bounds
+        Vector3 playerPos = transform.position;
+
+        //removing x movement
+        /*
 		if(Input.GetKey("left") && playerPos.x > FishworldUpperCorner.x)
 			transform.position += Vector3.left * moveSpeed * Time.deltaTime;
 		
 		if(Input.GetKey("right") &&  playerPos.x <  FishworldUpperCorner.x + 15)
 			transform.position += Vector3.right * moveSpeed * Time.deltaTime;
+        */
 
+        //old method of limit Y movement
+        /*
 		if(Input.GetKey("up") && playerPos.y < FishworldUpperCorner.y - Fish_Half_szY)
 			transform.position += Vector3.up * moveSpeed * Time.deltaTime;    
 		
 		if(Input.GetKey("down") && playerPos.y > FishworldLowerCorner.y)
 			transform.position += Vector3.down * moveSpeed * Time.deltaTime;
+        */
 
-	}   
+        //new method to limit Y movement
+        if (Input.GetKey("up") && playerPos.y < Y_Movement_Range.x)
+            transform.position += Vector3.up * moveSpeed * Time.deltaTime;
+
+        if (Input.GetKey("down") && playerPos.y > Y_Movement_Range.y)
+            transform.position += Vector3.down * moveSpeed * Time.deltaTime;
+
+    }
 
 	public void AnimationSwitch()
 	{
 		anim.SetTrigger(jumpHash);
-
 	}
 	
 
@@ -120,7 +137,7 @@ public class Player : MonoBehaviour {
 
 		// If hit wrong letter
 		if (c.gameObject.name == "wrong(Clone)") 
-		{		
+		{
 			WrongAnswers ++;
 			BadSFX.Play();
 			GameManager.ins.Score -= ScoreForWrongLetter;
@@ -144,7 +161,7 @@ public class Player : MonoBehaviour {
 			}
 
 			if (GameManager.ins.OnFireMode == false)
-				{
+		    {
 				if (GameManager.ins.CorrectLetters.Contains(GameManager.ins.CorrectLetter))
 				{
 					GameManager.ins.Score += ScoreForOldLetter;}
