@@ -144,6 +144,9 @@ public class Player : MonoBehaviour {
 			GameManager.ins.UpdateScore();
 			mCorrectAnswersForOnFire = 0;
 			GameManager.ins.OnFireMode = false;
+
+			// Points animation
+			c.GetComponent<Spawner> ().Pointanim ("-" + ScoreForWrongLetter);
 		}
 		// If hit correct letter
 		if (c.gameObject.name == "correct(Clone)") 
@@ -164,26 +167,34 @@ public class Player : MonoBehaviour {
 		    {
 				if (GameManager.ins.CorrectLetters.Contains(GameManager.ins.CorrectLetter))
 				{
-					GameManager.ins.Score += ScoreForOldLetter;}
+					GameManager.ins.Score += ScoreForOldLetter;
+					// Points animation
+					c.GetComponent<Spawner> ().Pointanim ("+" + ScoreForOldLetter);
+				}
 				else
 				{
 					GameManager.ins.Score += ScoreForNewLetter;
+					// Points animation
+					c.GetComponent<Spawner> ().Pointanim ("+" + ScoreForNewLetter);
 				}
 			}
 
 			if (GameManager.ins.OnFireMode == true)
 			{
 					GameManager.ins.Score += ScoreOnFireMode;
+					// Points animation
+					c.GetComponent<Spawner> ().Pointanim ("+" + ScoreOnFireMode);
 			}
 
 			GameManager.ins.UpdateScore();
 			GameManager.ins.CorrectLetters.Add(GameManager.ins.CorrectLetter);
-			//GameManager.ins.CanCreateNewLetter = true;
+
 
 		}
 		// If hit obstacale
 		if (c.gameObject.name == "Obstacle(Clone)") 
 		{
+			Destroy(c.gameObject);
 			mCorrectAnswersForOnFire = 0;
 			GameManager.ins.OnFireMode = false;
 			LoseSFX.Play();
@@ -195,24 +206,17 @@ public class Player : MonoBehaviour {
 
 		if ((CorrectAnsweres + WrongAnswers) >= checkScoreOnLastNumberOfItems) {
 			
-//			print("precentageScoreToUpLevel   "  + CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems );
-//			print("precentageScoreToLowerLevel    "  + WrongAnswers * 100 / checkScoreOnLastNumberOfItems);
 
 			if (CorrectAnsweres * 100 / checkScoreOnLastNumberOfItems >= precentageScoreToUpLevel )
 			{
 				GameManager.ins.LevelNumber += 1;
 				CorrectAnsweres = 0;
 				WrongAnswers = 0;
-				//print ("LEVEL UP!");
 				LevelNumberText.text = "Level : " + GameManager.ins.LevelNumber;
 
 				// Adjust Parralax background speed
-			
 				parralax.ins.ParallaxSpeedBackground += 0.05f;
 				parralax.ins.ParallaxSpeedButtom += 0.04f;
-
-				//BGScroller.ins.BG_scrollSpeed += 0.5f;
-				//ButtomScrolle.ins.Buttom_scrollSpeed += 0.4f;
 
 
 			}
@@ -221,15 +225,11 @@ public class Player : MonoBehaviour {
 				GameManager.ins.LevelNumber -= 1;
 				CorrectAnsweres = 0;
 				WrongAnswers = 0;
-				//print ("LEVEL DOWN!");
 				LevelNumberText.text = "Level : " + GameManager.ins.LevelNumber;
 
 				// Adjust Parralax background speed
 				parralax.ins.ParallaxSpeedBackground -= 0.05f;
 				parralax.ins.ParallaxSpeedButtom -= 0.04f;
-
-				//BGScroller.ins.BG_scrollSpeed -= 0.5f;
-				//ButtomScrolle.ins.Buttom_scrollSpeed -= 0.4f;
 
 			}
 
@@ -249,8 +249,6 @@ public class Player : MonoBehaviour {
 		
 			GameManager.ins.GameSpeed = moveSpeed;
 		}
-
-		Destroy(c.gameObject);
 
 	}
 }

@@ -8,6 +8,9 @@ public class Spawner : MonoBehaviour {
 	public SpriteRenderer mImage;
 	private float ScreenLeftBoundary;
 
+	public TextMesh PointsText;
+	public Animator mAnimator;
+
 	void Awake()
 	{
 		Vector3 LeftCorner = new Vector3 (Screen.width - Screen.width  , Screen.height, 10f);
@@ -34,7 +37,14 @@ public class Spawner : MonoBehaviour {
 
 
 	}
-	
+
+	public void Pointanim(string points)
+	{
+		PointsText.text = points;
+		mAnimator.enabled = true;
+	}
+
+
 
 	void Update()
 	{
