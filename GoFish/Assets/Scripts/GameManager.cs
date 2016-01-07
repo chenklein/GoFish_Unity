@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour {
 	public List<string>  SpawnerKind;
 
 	public bool OnFireMode;
-	public bool CanCreateNewLetter;
 
 	// Textures
 	public List<Sprite> AllFishesSprites;
@@ -155,9 +154,14 @@ public class GameManager : MonoBehaviour {
 		ScoreText.text = Score.ToString();
 	}
 
+	float TotalSequenceTime;
+
+
 	public void CreateNewLetter()
 	{
 		WrongLetters.Clear ();
+		TotalSequenceTime = 0;
+
 		int RandomCorrect = UnityEngine.Random.Range (0, AllLetters.Count);
 		CorrectLetter = AllLetters [RandomCorrect];
 		CorrectLetterText.text = CorrectLetter;
@@ -191,8 +195,7 @@ public class GameManager : MonoBehaviour {
 
 
 		}
-
-		CanCreateNewLetter = false;
+			
 	}
 	
 	void LevelDesign()
@@ -226,7 +229,7 @@ public class GameManager : MonoBehaviour {
 		}
 		
 	}
-	
+
 
 	IEnumerator SpawnWaves ()
 	{
@@ -246,22 +249,16 @@ public class GameManager : MonoBehaviour {
 				GameObject SpawnRaw = GameObject.Find(split[2].Trim());
 
 				yield return new WaitForSeconds (spawnWait);
-		
+			
 				Vector3 spawnPosition = SpawnRaw.transform.position;
 				Quaternion spawnRotation = Quaternion.identity;
 				Instantiate (Spawner, spawnPosition, spawnRotation);
 
+				TotalSequenceTime += spawnWait;
 			}
 
-
-						if (CanCreateNewLetter == true) {
-							
-							string FirstItemInLine = CurrentLineSplits[0];
-							string[] split = FirstItemInLine.Split (';');
-							spawnWait = float.Parse(split[0].Trim());
-							yield return new WaitForSeconds (spawnWait);
-							CreateNewLetter();
-						}
+			yield return new WaitForSeconds (TotalSequenceTime + GameSpeed);
+			CreateNewLetter();
 			
 		}
 	}

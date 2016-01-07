@@ -178,7 +178,7 @@ public class Player : MonoBehaviour {
 
 			GameManager.ins.UpdateScore();
 			GameManager.ins.CorrectLetters.Add(GameManager.ins.CorrectLetter);
-			GameManager.ins.CanCreateNewLetter = true;
+			//GameManager.ins.CanCreateNewLetter = true;
 
 		}
 		// If hit obstacale
