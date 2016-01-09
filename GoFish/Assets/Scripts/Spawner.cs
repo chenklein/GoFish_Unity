@@ -40,6 +40,8 @@ public class Spawner : MonoBehaviour {
 
 	public void Pointanim(string points)
 	{
+        Debug.Log("points anim " + points+ " object "+this.gameObject);
+
 		PointsText.text = points;
 		mAnimator.enabled = true;
 	}
