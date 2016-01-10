@@ -60,6 +60,8 @@ public class GameManager : MonoBehaviour {
 
 	public bool OnFireMode;
 
+	public float LastFishInSequence_X_Position;
+
 	// Textures
 	public List<Sprite> AllFishesSprites;
 	public List<Sprite>  AllObsticlesSprites;
@@ -154,13 +156,11 @@ public class GameManager : MonoBehaviour {
 		ScoreText.text = Score.ToString();
 	}
 
-	float TotalSequenceTime;
-
 
 	public void CreateNewLetter()
 	{
+		
 		WrongLetters.Clear ();
-		TotalSequenceTime = 0;
 
 		int RandomCorrect = UnityEngine.Random.Range (0, AllLetters.Count);
 		CorrectLetter = AllLetters [RandomCorrect];
@@ -252,13 +252,14 @@ public class GameManager : MonoBehaviour {
 			
 				Vector3 spawnPosition = SpawnRaw.transform.position;
 				Quaternion spawnRotation = Quaternion.identity;
-				Instantiate (Spawner, spawnPosition, spawnRotation);
+				GameObject NewFish = Instantiate (Spawner, spawnPosition, spawnRotation) as GameObject;
 
-				TotalSequenceTime += spawnWait;
+				if (i == SpawnerCount-1) {
+
+					NewFish.tag = "LastFish";
+				}
 			}
 
-			yield return new WaitForSeconds (TotalSequenceTime + GameSpeed);
-			CreateNewLetter();
 			
 		}
 	}
@@ -272,7 +273,7 @@ public class GameManager : MonoBehaviour {
 		GameOverPanel.SetActive (true);
 
 		GameObject[] Spawneres = GameObject.FindGameObjectsWithTag ("Spawner");
-		
+	
 		for (int i = 0; i < Spawneres.Length; i++) {
 			
 			Destroy(Spawneres[i]);

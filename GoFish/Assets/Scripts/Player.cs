@@ -9,7 +9,7 @@ public class Player : MonoBehaviour {
 
 	public Camera cam;
 	public float moveSpeed;
-	//private float Fish_szX;
+	private float Fish_szX;
 	private float Fish_szY;
 
 	private float Fish_Half_szX;
@@ -65,7 +65,7 @@ public class Player : MonoBehaviour {
 		jumpHash = Animator.StringToHash("fishcatch");
 
 		// Get Fish Size
-		//Fish_szX = gameObject.GetComponent<Renderer>().bounds.size.x;
+		Fish_szX = gameObject.GetComponent<Renderer>().bounds.size.x;
 		Fish_szY = gameObject.GetComponent<Renderer>().bounds.size.y;
 
 		Fish_Half_szX = gameObject.GetComponent<Renderer>().bounds.size.x/2;
@@ -123,13 +123,26 @@ public class Player : MonoBehaviour {
         if (Input.GetKey("down") && playerPos.y > Y_Movement_Range.y)
             transform.position += Vector3.down * moveSpeed * Time.deltaTime;
 
+		// Change to new letter
+		if (GameObject.FindGameObjectWithTag("LastFish") != null && playerPos.x > GameObject.FindGameObjectWithTag("LastFish").transform.position.x)
+			{
+				GameObject.FindGameObjectWithTag ("LastFish").tag = "Spawner";
+				GameManager.ins.CreateNewLetter ();
+			}
+
     }
 
 	public void AnimationSwitch()
 	{
 		anim.SetTrigger(jumpHash);
 	}
-	
+
+	IEnumerator WaitForSeconds() {
+
+		yield return new WaitForSeconds(1);
+		GameManager.ins.CreateNewLetter ();
+	}
+
 
 	void OnTriggerEnter2D(Collider2D c)
 	{
@@ -138,6 +151,12 @@ public class Player : MonoBehaviour {
 		// If hit wrong letter
 		if (c.gameObject.name == "wrong(Clone)") 
 		{
+			// Change to new letter
+			if (c.gameObject.tag == "LastFish")
+			{
+				StartCoroutine(WaitForSeconds());
+			}
+
 			WrongAnswers ++;
 			BadSFX.Play();
 			GameManager.ins.Score -= ScoreForWrongLetter;
@@ -151,6 +170,11 @@ public class Player : MonoBehaviour {
 		// If hit correct letter
 		if (c.gameObject.name == "correct(Clone)") 
 		{
+			// Change to new letter
+			if (c.gameObject.tag == "LastFish")
+			{
+				StartCoroutine(WaitForSeconds());
+			}
 
 			CorrectAnsweres++;
 			GoodSFX.Play();
